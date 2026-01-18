@@ -1,22 +1,16 @@
 # CPSC4130 GPG Key Exchange
 
-A repository for exchanging GPG public keys for the key signing assignment.
+A repository for exchanging GPG public keys for the key signing assignment. All for one, and one for all.
 
-## Quick Start
-
-```bash
-# Clone the repo
-git clone <repo-url>
-cd gpg-keyring
-
-# Import the course key
-gpg --import course_key.asc
-```
+## Prerequisite
+- python3
+- gpg
+   - Make sure the default gpg dir contains your private key
 
 ## Repository Structure
 
 ```
-gpg-keyring/
+Key-Exchange/
 ├── course_key.asc              # Course public key
 ├── keys/                       # Everyone's public keys (course-signed)
 │   ├── ab123.asc
@@ -32,23 +26,31 @@ gpg-keyring/
 └── collect_signatures.sh       # Collect signatures on your key
 ```
 
-## Workflow
+## Quick Start
 
 ### Step 1: Submit Your Key (One Time)
 
 1. Fork this repository
-2. Add your public key to `keys/<netid>.asc`
+2. Setup upstream
+```bash
+git remote add upstream https://github.com/VitaLemonCoffee/Key-Exchange.git
+
+git fetch upstream
+git merge upstream/main
+git push
+```
+3. Add your public key to `keys/<netid>.asc`
    - **Must be the course-signed version** (from Canvas after submission)
-3. Create a Pull Request
+4. Create a Pull Request
    - CI will verify your key has the course signature
    - CI will reject files outside `keys/*.asc` or `signed/*/*.asc`
-4. Wait for merge
+5. Wait for merge (ideally, a pull request pass the status check will be merged automatically)
 
 ### Step 2: Sign Everyone's Keys
 
 ```bash
 # Pull latest keys
-git pull
+git pull upstream main
 
 # Run the signing script
 chmod +x sign_all.sh
@@ -57,14 +59,18 @@ chmod +x sign_all.sh
 # Commit and push your signatures
 git add signed/
 git commit -m "Add signatures from <your-netid>"
-git push  # or create PR
+git push
 ```
+
+Create a PR from the main branch of the forked repository to the main branch on the github web portal or using extensions in your IDE.
+
+Note: This step is repeatable. Feel free to rerun when someone needs signatures from you.
 
 ### Step 3: Collect Signatures on Your Key
 
 ```bash
 # Pull latest (after others have signed)
-git pull
+git pull upstream main
 
 # Run the collection script
 chmod +x collect_signatures.sh
@@ -91,7 +97,7 @@ gpg --check-sigs <netid>@yale.edu
 
 Look for:
 ```
-sig!         A049C765A07C89D8 2026-01-17  CPSC4130
+sig!         A049C765A07C89D8 2026-MM-YY  CPSC4130
 ```
 
 ## Course Key Fingerprint
@@ -102,11 +108,20 @@ sig!         A049C765A07C89D8 2026-01-17  CPSC4130
 
 ## FAQ
 
-**Q: CI failed on my key submission?**
+**Q: CI failed on my key submission?**\
 A: You probably submitted your original key, not the course-signed version.
 
-**Q: How do I check my progress?**
+**Q: How do I check my progress?**\
 A: Run `./collect_signatures.sh`
 
-**Q: Can adversarial keys sneak in?**
+**Q: Can adversarial keys sneak in?**\
 A: No (as long as you trust the manager of this repo) - CI verifies course signature on all keys in `keys/`. The `sign_all.sh` script also verifies before signing.
+
+**Q: Does adding my key to this repo guarantee that I will get enough signatures?**\
+A: No - This repo only provides convenient tools for automated signing, but there is no enforcement of signing. Also, keys added later are likely to get fewer signatures.
+
+**Q: I am an attacker, how should I put adversarial keys into this repo?**\
+A: Try to hack github.
+
+**Q: I encountered a bug / I have another question.**\
+A: Discuss in github issues or Ed.
