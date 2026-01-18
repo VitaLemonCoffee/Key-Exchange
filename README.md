@@ -21,7 +21,10 @@ Key-Exchange/
 │   │   └── ...
 │   └── ...
 ├── scripts/
-│   └── verify_pr_keys.sh       # CI verification script
+│   ├── collect_signatures.py   # Collect signatures on your key from signed/
+│   ├── gpg_utils.py            # Core module - shared GPG utilities
+│   ├── sign_all.py             # Sign all verified keys in keys/
+│   └── verify_key.py           # Verify key files have course signature
 ├── sign_all.sh                 # Sign all verified keys
 └── collect_signatures.sh       # Collect signatures on your key
 ```
